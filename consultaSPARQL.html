@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Consultas SPARQL</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <link href="consultaSPARQL.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="consultaSPARQL.js"></script>
+
+
+  </head>
+
+  <body>
+<!-- Fin de subcabecera-->
+  <div class="contenido_principal" align=center>
+    <div class="titulo_principal">
+      <h1>Interfaz de consulta SPARQL</h1>
+    </div>
+
+    <!--Texto introductorio consultas-->
+    <div class="texto" align=left>
+      <p class="p_principal" align=left>
+        El objeto de esta interfaz es ofrecer una interfaz básica de consulta SPARQL. Para la consulta se utiliza el <a class="link_normal" href="http://opendata.caceres.es/sparql">punto SPARQL</a>  de <a class="link_normal" href="http://opendata.caceres.es">Opendata Cáceres</a>.
+      </p>
+
+      <p class="p_principal" align=left>
+        Los datos se han organizado en grafos, cada grafo se corresponde con uno o varios datasets del <a class="link_normal" href="http://opendata.caceres.es/dataset">catálogo</a>. El grafo por defecto agrupa todos los otros grafos.
+      </p>
+    </div>
+
+    <h2 class="subtitulo_principal"><b>Consulta SPARQL</b></h2>
+
+    
+    <div class="texto" align=left>
+      <p class="p_principal" align=left> Introduce la consulta:</p>
+    </div>
+
+    <!--PARTE DE CONSULTA-->
+    <div align= left>
+
+      <div>
+        <input id="textoGrafoSPARQL" type="text" placeholder="Grafo">
+        <div id="selectorGrafo">
+          <select id="selectorConsulta">
+            <option value="0">Grafo por defecto</option>
+            <option value="1">Árboles</option>
+            <option value="2">Farolas</option>
+            <option value="3">Museos</option>
+            <option value="4">Farmacias</option>
+            <option value="5">Vias</option>
+            <option value="6">Autobuses</option>ç
+            <option value="7">Presupuestos</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Contenedor para realizar las consultas -->
+      <div class="contenedorConsultas">
+
+      <!-- La ventana de edición de texto -->
+      <textarea id="textoSPARQL" rows="10">select ?a ?b ?c where { ?a ?b ?c. } limit 10</textarea>
+        
+      </div>
+
+
+
+      <div id="postConsulta">
+        <div style="display: inline-block;">
+          <button id="botonSPARQL" type="button">Realizar consulta</button>
+          <button id="botonSPARQL2" type="button">Reiniciar</button>
+        </div>
+      </div>
+
+    <h2 class="subtitulo_principal"><b>Resultados</b></h2>
+
+    <!-- Contenedor con los resultados -->
+    <div class = "contenedorResultados">
+
+      <!-- La tabla de los resultados -->
+      <table id="Resultados" class = "tablaResultados">
+      </table> 
+      <p id = "errorResultados" align=left>Los resultados de la consulta aparecen aquí<p>
+    </div>
+  </div>
+
+
+
+  <script>
+    //---------------------- ACCIONES QUE SE REALIZAN CON JAVASCRIPT/JQUERY -----------------------
+
+    //Variable donde se almacenará la consulta completa
+    var querySPARQLCompleta = "";
+
+    //Variables para componer una consulta SPARQL:
+    var preConsultaSPARQL = "http://opendata.caceres.es/sparql"; //La consulta siempre empieza igual.
+    var medConsultaSPARQL = "&query="; //Entre el grafo y la consulta siempre se coloca esta claúsula.
+    var consultaSPARQL = "";
+    var grafoConsultaSPARQL = "";
+
+    //Variable que reconoce si se ha cargado la tabla de resultados.
+    var hayTablaResultados = true;
+
+    //Variable para nombrar el id de las filas de la tabla resultados.
+    var idRowResultados = 0;
+
+
+    $( document ).ready(function() {
+
+      //Realizar la consulta:
+      $( "#botonSPARQL" ).click(function( event ) {
+
+        //Borramos la consulta anterior.
+        $("#Resultados").empty();
+        $("#errorResultados").empty();
+
+        //Actualizamos el valor de la string de consulta:
+        grafoConsultaSPARQL = $("#textoGrafoSPARQL").val();
+        consultaSPARQL = ($("#textoSPARQL").val());
+
+        //Vamos a realizar ahora una llamada AJAX para traernos los datos del servidor.
+        //Para facilitar el tratamiento de los datos vamos a pedir la respuesta en JSON.
+        $.ajax({
+          data: { "default-graph-uri":grafoConsultaSPARQL, query:consultaSPARQL },
+          dataType: "json",
+          url: preConsultaSPARQL,
+          statusCode: {
+              400: function(error) {
+                $("#errorResultados").text(error.responseText);
+                $("#errorResultados").css('color', 'red');
+              }
+            },
+          success: function(data) {  
+            //Actualizamos el valor de la ultima Query realizada.
+            rellenarTabla(data);
+          }
+        });
+
+        return false;
+      });
+
+      //Botón de reset.
+      $( "#botonSPARQL2" ).click(function( event ) {
+        $("#textoSPARQL").val("select ?a ?b ?c where { ?a ?b ?c. } limit 10");
+        return false;
+      });
+
+
+      //Cadena identificadora para cada grafo. 
+      $("#selectorConsulta").change(function(){
+        var opcion = $("#selectorConsulta option:selected").val();
+        switch(opcion)
+        {
+          case '0':
+            $("#textoGrafoSPARQL").val("");
+            break;
+          case '1':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/medio-ambiente/arboles/Arbol/");
+            break;
+          case '2':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/energia/farolas/Farola/");
+            break;
+          case '3':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/cultura-ocio/museos/Museo/");
+            break;
+          case '4':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/salud/farmacias/Farmacia/");
+            break;
+          case '5':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/urbanismo-infraestructuras/vias/Via/");
+            break;
+          case '6':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/transporte/autobuses/");
+            break;
+          case '7':
+            $("#textoGrafoSPARQL").val("http://opendata.caceres.es/recurso/sector-publico/presupuestos/");
+            break;
+          default:
+            alert("ERROR");
+        }
+        return false;
+      });
+
+    }); //Final de .ready.
+
+  </script>
+
+</body>
+</html>

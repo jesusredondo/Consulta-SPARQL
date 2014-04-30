@@ -1,0 +1,104 @@
+.contenido_principal{
+	position:relative;
+	padding-top:20px;
+	width:90%;
+	left:5%;
+}
+
+.titulo_principal{
+	border-bottom:solid 2px #7391A5;
+}
+
+.titulo_principal h1{
+	color: #7391A5;
+	font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+	font-family: arial,helvetica,sans-serif;
+	margin:0px 0px 5px 0px;
+}
+
+.subtitulo_principal{
+	color: #4F7589 !important;
+    font-size: 18px;
+    text-align: left;
+    text-decoration: none;
+}
+
+.texto{
+	margin-top: 22px;
+}
+
+.p_principal,.texto_ter ul li {
+	color: #332F21;
+    font-family: Helvetica,Arial,sans-serif;
+	font-size: 12px;
+	text-align: justify;
+}
+
+.link_normal:link{
+	color: #7391A5;
+	color: inherit;
+	text-decoration:underline;
+}
+
+.link_normal:visited{
+	color: #7391A5;
+	color: inherit;
+	text-decoration: underline;
+}
+
+.link_normal:hover{
+	color: #7391A5;
+	color: inherit;
+	text-decoration: underline;
+}
+
+.link_normal:active{
+	color: #7391A5;
+	color: inherit;
+	text-decoration: underline;
+}
+
+#textoGrafoSPARQL{
+	float:left;
+	width: 85% !important;
+}
+
+#selectorGrafo{
+	float:right;
+}
+
+#textoSPARQL {
+	width:100% !important;
+}
+
+.contenedorResultados{
+	border: 1px solid #CCCCCC;
+	font-size: 12px;
+	overflow: auto;
+	padding-top: 8px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-bottom: 3px;
+	margin-top: 4px;
+	max-height: 1000px;
+}
+
+.tablaResultados th{
+	background-color:rgba(50,50,255,0.50) !important;
+
+}
+
+.tablaResultados tr{
+	background-color:rgba(255,255,255,0.85) !important;
+}
+
+.tablaResultados tr:hover{
+	background-color: rgba(200,200,255,0.65) !important;
+}
+
+#errorResultados {
+	color: #CCCCCC;
+
+}
